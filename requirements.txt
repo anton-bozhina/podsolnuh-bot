@@ -1,0 +1,4 @@
+Flask
+gunicorn
+vk
+google-api-python-client
