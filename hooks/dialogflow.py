@@ -4,7 +4,7 @@
 import json
 
 
-def dialogflow_webhook(request, log):
+def dialog_flow(request, log):
     """    Функция отвечает за обработку и отправку данных DialogFlow     """
 
     action = request.get('queryResult').get('action')
