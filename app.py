@@ -23,7 +23,7 @@ def homepage():
     """.format(time=the_time)
 
 
-@APP.route(os.environ.get('HOOK_URL_DIALOGFLOW', '/empty'), methods=['POST'])
+@APP.route('/webhook/{}/dialogflow'.format(os.environ.get('HOOK_URL', 'not-secure')), methods=['POST'])
 def webhook():
     """This method handles the http requests for the  Dialogflow webhook
     This is meant to be used in conjunction with the translate Dialogflow agent
