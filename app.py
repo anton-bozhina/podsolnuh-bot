@@ -29,7 +29,7 @@ def webhook():
     This is meant to be used in conjunction with the translate Dialogflow agent
     """
 
-    return make_response(jsonify(dialogflow_webhook(LOG, request.get_json(force=True))))
+    return make_response(jsonify(dialogflow_webhook(request.get_json(force=True), LOG)))
 
 
 if __name__ == '__main__':
