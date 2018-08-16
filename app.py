@@ -1,26 +1,28 @@
-import vk
+# -*- coding: utf8 -*-
+""" Podsolnuh Bot v. 0.0 """
+
 import json
 import os
-from flask import Flask, jsonify, make_response, request
 from datetime import datetime
+import vk
+from flask import Flask, jsonify, make_response, request
 
-app = Flask(__name__)
-log = app.logger
+APP = Flask(__name__)
+LOG = APP.logger
 
 
-@app.route('/')
+@APP.route('/')
 def homepage():
+    """Generate default page"""
     the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
 
     return """
     <h1>Hello heroku</h1>
-    <p>Test It is currently {time}.</p>
-
-    <img src="http://loremflickr.com/600/400" />
+    <p>It is currently {time}.</p>
     """.format(time=the_time)
 
 
-@app.route(os.environ.get('HOOK_URL_DIALOGFLOW', '/webhook'), methods=['POST'])
+@APP.route(os.environ.get('HOOK_URL_DIALOGFLOW', '/webhook'), methods=['POST'])
 def webhook():
     """This method handles the http requests for the  Dialogflow webhook
     This is meant to be used in conjunction with the translate Dialogflow agent
@@ -35,19 +37,18 @@ def webhook():
         # Get the parameters for the translation
         fulfillment_messages = req['queryResult']['fulfillmentMessages'][0]['text'].get('text')
 
-        log.error(fulfillment_messages)
+        LOG.error(fulfillment_messages)
 
         # Compose the response to Dialogflow
         res = {'fulfillmentText': fulfillment_messages[0].format('Test Song!')}
-        log.error(res)
+        LOG.error(res)
     else:
         # If the request is not to the translate.text action throw an error
-        log.error('Unexpected action requested: %s', json.dumps(req))
+        LOG.error('Unexpected action requested: %s', json.dumps(req))
         res = {'speech': 'error', 'displayText': 'error'}
 
     return make_response(jsonify(res))
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
-
+    APP.run(debug=True, use_reloader=True)
