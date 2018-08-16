@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 import vk
 from flask import Flask, jsonify, make_response, request
+from hooks.dialogflow import dialogflow_webhook
 
 APP = Flask(__name__)
 LOG = APP.logger
@@ -22,32 +23,13 @@ def homepage():
     """.format(time=the_time)
 
 
-@APP.route(os.environ.get('HOOK_URL_DIALOGFLOW', '/webhook'), methods=['POST'])
+@APP.route(os.environ.get('HOOK_URL_DIALOGFLOW', '/empty'), methods=['POST'])
 def webhook():
     """This method handles the http requests for the  Dialogflow webhook
     This is meant to be used in conjunction with the translate Dialogflow agent
     """
 
-    # Get request parameters
-    req = request.get_json(force=True)
-    action = req.get('queryResult').get('action')
-
-    # Check if the request is for the translate action
-    if action == 'playsong':
-        # Get the parameters for the translation
-        fulfillment_messages = req['queryResult']['fulfillmentMessages'][0]['text'].get('text')
-
-        LOG.error(fulfillment_messages)
-
-        # Compose the response to Dialogflow
-        res = {'fulfillmentText': fulfillment_messages[0].format('Test Song!')}
-        LOG.error(res)
-    else:
-        # If the request is not to the translate.text action throw an error
-        LOG.error('Unexpected action requested: %s', json.dumps(req))
-        res = {'speech': 'error', 'displayText': 'error'}
-
-    return make_response(jsonify(res))
+    return make_response(jsonify(dialogflow_webhook(LOG, request.get_json(force=True))))
 
 
 if __name__ == '__main__':
