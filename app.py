@@ -6,8 +6,8 @@ from datetime import datetime
 import vk
 from flask import Flask, jsonify, make_response, request
 from hooks.dialogflow import dialog_flow
-from hooks.addtrack import add_track
-from hooks.gettrack import get_track_json
+from hooks.track import add_track, get_all_tracks
+
 
 APP = Flask(__name__)
 LOG = APP.logger
@@ -31,22 +31,15 @@ def dialogflow():
     return make_response(jsonify(dialog_flow(request.get_json(force=True), LOG)))
 
 
-@APP.route('/webhook/{}/addtrack'.format(os.environ.get('HOOK_URL', 'not-secure')))
-def addtrack():
+@APP.route('/webhook/{}/track'.format(os.environ.get('HOOK_URL', 'not-secure')))
+def track():
     """ Обработка запроса на добавление трека """
 
-    if 'track' in request.args:
-        return add_track(request.args.get('track', type=str))
-    else:
-        return 'Args is Empty'
-
-
-@APP.route('/webhook/{}/gettrack'.format(os.environ.get('HOOK_URL', 'not-secure')))
-def gettrack():
-    """ Обработка запроса на добавление трека """
-
-    if 'json' in request.args:
-        return get_track_json()
+    if 'action' in request.args:
+        if request.args.get('action', type=str) == 'add':
+            return add_track(request.args.get('track', type=str))
+        if request.args.get('action', type=str) == 'get':
+            return get_all_tracks()
     else:
         return 'Args is Empty'
 
