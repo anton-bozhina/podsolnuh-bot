@@ -49,6 +49,10 @@ def get_all_tracks():
         tracks_db.set_trace_callback(print)
         cursor = tracks_db.cursor()
         cursor.execute('SELECT * FROM tracks')
-        list = cursor.fetchall()
 
-        return('</br>'.join('<strong>[{}]</strong>: {}'.format(x[0], x[1]) for x in list))
+        try:
+            list = cursor.fetchall()
+            return('</br>'.join('<strong>[{}]</strong>: {}'.format(x[0], x[1]) for x in list))
+        except:
+            return ''
+
