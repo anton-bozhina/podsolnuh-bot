@@ -36,7 +36,7 @@ def add_track(track):
 
             # Проверка на старые записи
             cursor.execute("""
-            DELETE FROM tracks where played <= datetime('now', '-1 day')
+            DELETE FROM tracks where played <= datetime('now', '-1 hour')
             """)
 
             return 'track add'
